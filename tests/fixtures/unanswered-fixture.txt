@@ -1,0 +1,12 @@
+[4/10/26, 9:00:00 AM] Collective Tech: ‎Messages and calls are end-to-end encrypted.
+[4/10/26, 9:00:00 AM] ~ Admin: ‎~ Admin created this group
+[4/15/26, 10:00:00 AM] ~ Alice: buenos días
+[4/15/26, 10:05:00 AM] ~ Bob: ¿alguien conoce un buen diseñador de producto?
+[4/15/26, 10:07:00 AM] ~ Carol: busco un ilustrador para un proyecto
+[4/15/26, 10:15:00 AM] ~ Diana: Bob, te paso el contacto de Martín, diseñador excelente
+[4/15/26, 10:20:00 AM] ~ Eve: Carol, no conozco ilustradores
+[4/15/26, 2:00:00 PM] ~ Frank: cambiando de tema
+[4/16/26, 9:00:00 AM] ~ Grace: necesito consejo sobre pricing
+[4/16/26, 3:00:00 PM] ~ Henry: Grace, te mando info en privado
+[4/17/26, 11:00:00 AM] ~ Iris: ¿alguien ha probado el nuevo modelo?
+[4/17/26, 6:00:00 PM] ~ Alice: si, perdón por la tardanza, funciona bien

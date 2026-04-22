@@ -1,0 +1,12 @@
+[4/1/26, 9:00:00 AM] Collective Tech: ‎Messages and calls are end-to-end encrypted.
+[4/1/26, 9:00:00 AM] ~ Admin: ‎~ Admin created this group
+[4/5/26, 10:00:00 AM] ~ Alice: Hola a todos
+[4/5/26, 10:05:00 AM] ~ Bob: buenas
+[4/5/26, 10:10:00 AM] ~ Alice: que tal
+[4/5/26, 10:12:00 AM] ~ Bob: bien
+[4/5/26, 10:15:00 AM] ~ Alice: genial
+[4/10/26, 11:00:00 AM] ~ Carol: ‎~ Carol joined from the community
+[4/15/26, 9:00:00 AM] ~ Bob: buenos días a todos
+[4/15/26, 9:30:00 AM] ~ Carol: hola Bob
+[4/15/26, 10:00:00 AM] ~ Carol: ¿alguien tiene tiempo para una pregunta?
+[4/15/26, 2:00:00 PM] ~ Bob: tarde, pero sí

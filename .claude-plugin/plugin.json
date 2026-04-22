@@ -1,0 +1,31 @@
+{
+  "name": "vibra",
+  "description": "WhatsApp community intelligence for community managers. Parse exports, generate weekly digests, surface unanswered questions — all locally, no API keys.",
+  "version": "0.0.1",
+  "author": {
+    "name": "YUNO"
+  },
+  "license": "MIT",
+  "keywords": [
+    "whatsapp",
+    "community",
+    "community-manager",
+    "analytics",
+    "digest",
+    "retention"
+  ],
+  "userConfig": {
+    "default_output_dir": {
+      "type": "directory",
+      "title": "Default output directory",
+      "description": "Where Vibra writes artifacts (JSON, HTML, markdown). Can be overridden per-command with --output-dir.",
+      "default": "./vibra-output"
+    },
+    "default_lang": {
+      "type": "string",
+      "title": "Default output language",
+      "description": "Force a language for rendered artifacts (en, es, pt, fr, …). Leave blank to auto-detect from the community's messages.",
+      "default": ""
+    }
+  }
+}

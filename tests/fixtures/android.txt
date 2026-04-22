@@ -1,0 +1,7 @@
+13/11/2025, 15:19 - Messages and calls are end-to-end encrypted.
+13/11/2025, 15:19 - Admin created group "Android Test"
+13/11/2025, 15:20 - Alice: Hola a todos
+13/11/2025, 15:22 - Bob: ¿alguien conoce Claude Code?
+13/11/2025, 15:25 - Alice: Sí, yo lo uso
+13/11/2025, 15:30 - Carol joined using this group's invite link
+13/11/2025, 15:32 - Carol: Hola, nueva por aquí

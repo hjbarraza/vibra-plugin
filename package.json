@@ -1,0 +1,24 @@
+{
+  "name": "vibra-plugin",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "vibra-parse": "./bin/vibra-parse.js",
+    "vibra-digest": "./bin/vibra-digest.js",
+    "vibra-unanswered": "./bin/vibra-unanswered.js",
+    "vibra-pulse": "./bin/vibra-pulse.js",
+    "vibra-action-list": "./bin/vibra-action-list.js",
+    "vibra-content-ideas": "./bin/vibra-content-ideas.js",
+    "vibra-profile": "./bin/vibra-profile.js",
+    "vibra-report": "./bin/vibra-report.js",
+    "vibra-members": "./bin/vibra-members.js"
+  },
+  "scripts": {
+    "test": "node --test \"tests/*.test.js\""
+  },
+  "dependencies": {},
+  "optionalDependencies": {
+    "better-sqlite3": "^11.3.0"
+  }
+}

@@ -1,0 +1,33 @@
+# Changelog
+
+All notable changes to Vibra are documented here.
+
+The format follows [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
+
+## [0.0.1] — 2026-04-22
+
+First public release — the Normal tier.
+
+### Added
+
+- **Skills** (9) — `/vibra:parse`, `/vibra:digest`, `/vibra:unanswered`, `/vibra:pulse`, `/vibra:action-list`, `/vibra:content-ideas`, `/vibra:profile`, `/vibra:report`, `/vibra:members`, plus the `analyze-whatsapp` orchestrator
+- **Parser** — iOS bracket + Android dash formats, locale-agnostic date detection (bound-check + monotonicity fallback), multi-locale system-message patterns (EN/ES/PT/FR), U+200E stripping, tilde-prefix sender normalization
+- **Analyzers** — thread clustering, digest ranking, unanswered-question bundling with shared-context attribution, pulse stats (activity/heatmap/Gini/response rate), action-list heuristics (silent joiners, welcome gaps, frustration candidates, shoutout candidates), content mining (links + quotables + mentions), member profiles, monthly reports, member lists, and roster-vs-active ratio
+- **CLI flags** — `--since`, `--until`, `--output-dir`, `--lang` across every command
+- **User config** — `default_output_dir` and `default_lang` persisted per plugin install
+- **Tests** — 44 tests covering parser (iOS/Android/EU/US formats), analyzers, edge cases (empty, system-only, unicode names)
+
+### Design principles
+
+- **Stateless** — every command reads a file, analyzes in memory, writes an artifact, exits. No database, no caches between runs
+- **No external API keys** — all LLM synthesis happens inside the host agent session
+- **Privacy-first** — community data never leaves the CM's machine
+- **Skill markdown instructs, scripts compute** — deterministic work in Node, judgment work in Claude
+
+### Known limitations (deferred to Pro)
+
+- No cross-run persistence (incremental ingest, judgment caching, member alias deduplication)
+- No longitudinal metrics (e.g., "unanswered for 3 weeks")
+- No local embedding tier (semantic topic search, cross-community matching)
+
+See `docs/PRO_ROADMAP.md` for the full deferred list.

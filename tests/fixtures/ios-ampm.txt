@@ -1,0 +1,9 @@
+[2/22/24, 1:47:12 AM] Collective Tech: ‎Messages and calls are end-to-end encrypted. Only people in this chat can read, listen to, or share them.
+[2/22/24, 1:47:12 AM] ~ Community Bot: ‎~ Community Bot created this group
+[11/13/25, 3:19:03 PM] ~ Alice: Hola
+[11/13/25, 3:19:10 PM] ~ Alice: Acabo de compartir esto ‎image omitted
+[11/13/25, 3:20:15 PM] ~ Bob: ¿Alguien probó el nuevo modelo? <This message was edited>
+[11/13/25, 3:21:00 PM] ~ Alice: This message was deleted.
+[11/13/25, 3:22:00 PM] ~ Bob: mensaje
+línea dos
+[11/13/25, 3:23:00 PM] ~ Carol: ‎~ Carol joined from the community
