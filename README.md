@@ -85,18 +85,27 @@ If Node is missing or older:
 
 ### 3. Install Vibra inside Claude Code
 
-Open Claude Code (terminal `claude` command, or the desktop app — both work). Then run these two commands:
+Open Claude Code (terminal `claude` command, or the desktop app — both work). Then run these commands in order:
 
 ```
 /plugin marketplace add hjbarraza/vibra-plugin
 /plugin install vibra@getvibra
+/reload-plugins
 ```
 
-Run `/reload-plugins` once to activate. That's it.
+The `/reload-plugins` step activates the newly-installed commands in your current session. If the `/vibra:*` commands still don't appear after reloading, **exit Claude Code (Ctrl+C twice, or `/exit`) and start a fresh session** — that guarantees the plugin loads cleanly.
+
+Verify it worked:
+```
+/vibra:pulse
+```
+
+Should either show the usage hint (path required) or auto-complete. If instead you see "command not found," re-check the `/plugin` **Installed** tab (should list `vibra`) and the **Errors** tab (should be empty).
 
 Update later:
 ```
 /plugin marketplace update getvibra
+/reload-plugins
 ```
 
 ---
@@ -278,6 +287,9 @@ If you cloned the repo:
 cd /path/to/vibra-plugin
 git pull
 ```
+
+**The `/vibra:*` commands don't appear after install.**
+Run `/reload-plugins`. If that doesn't fix it, exit Claude Code and open a fresh session. If they're still missing, check `/plugin` → **Errors** tab for load failures, and try `claude --debug` to see what's happening at startup.
 
 **I'm stuck.**
 Open an issue: https://github.com/hjbarraza/vibra-plugin/issues
