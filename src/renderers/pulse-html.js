@@ -610,17 +610,18 @@ function renderGratitude(p) {
 
 function renderTopics(p) {
   const tokens = p.topics?.topTokens ?? [];
-  const body = tokens.length
-    ? `<ul class="topic-list">${tokens.slice(0, 12).map(t => `<li><strong>${esc(t.token)}</strong> <span class="when">${t.count} messages · ${t.distinctMembers} members</span></li>`).join('')}</ul>`
-    : '<p class="muted">Not enough signal to surface topics.</p>';
+  const tokenDetails = tokens.length
+    ? `<details class="token-details"><summary>Raw keyword-frequency tokens (${tokens.length})</summary>
+       <ul class="topic-list">${tokens.slice(0, 12).map(t => `<li><strong>${esc(t.token)}</strong> <span class="when">${t.count} messages · ${t.distinctMembers} members</span></li>`).join('')}</ul>
+     </details>`
+    : '';
   return `<div class="card wide" id="sec-topics">
-  <h2>Topic signal</h2>
-  <p class="card-hint">Keyword-frequency tokens across multiple members. Semantic clustering + labels come from the agent.</p>
-  ${body}
+  <h2>What the community is talking about</h2>
+  <p class="card-hint">Themes extracted from the last four weeks of conversations, grouped by a subagent that read actual messages (not keyword counts). Each theme cites members who participated + representative quotes.</p>
   <div class="agent-fill" data-fill="topic-themes">
-    <h3>Topic themes</h3>
-    <p class="muted">Agent-synthesized theme labels. Run <code>/vibra-code-lite:pulse &lt;path&gt;</code> inside Claude Code to populate.</p>
+    <p class="muted"><strong>Awaiting subagent synthesis.</strong> Launch a subagent to read the last 4 weeks of conversations and produce 4–6 semantic themes with evidence, emerging topics, fading topics, and representative quotes. The token list below is the raw keyword signal as fallback.</p>
   </div>
+  ${tokenDetails}
 </div>`;
 }
 
@@ -1235,6 +1236,17 @@ body[data-active-tab="cm"] #tab-cm, body[data-active-tab="business"] #tab-busine
 .topic-list { columns: 2; column-gap: 32px; padding-left: 0; list-style: none; margin: 8px 0; }
 .topic-list li { break-inside: avoid; padding: 4px 0; font-size: 14px; }
 .topic-list .when { color: var(--text-subtle); font-size: 12px; margin-left: 6px; }
+.token-details { margin-top: 20px; border-top: 1px solid var(--border); padding-top: 14px; }
+.token-details summary { cursor: pointer; font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-subtle); padding: 4px 0; user-select: none; }
+.token-details summary:hover { color: var(--text); }
+.token-details[open] summary { margin-bottom: 8px; }
+
+.theme-block { margin: 16px 0; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+.theme-block:last-child { border-bottom: none; }
+.theme-block h4 { font-size: 15px; font-weight: 600; margin: 0 0 6px; color: var(--text); text-transform: none; letter-spacing: -0.01em; }
+.theme-block .theme-meta { font-size: 11px; color: var(--text-subtle); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 10px; }
+.theme-block blockquote { margin: 8px 0; padding: 8px 14px; border-left: 2px solid var(--border-strong); color: var(--text-muted); font-size: 13px; font-style: italic; background: var(--surface-2); border-radius: 0 6px 6px 0; }
+.theme-block blockquote cite { display: block; margin-top: 4px; font-size: 11px; color: var(--text-subtle); font-style: normal; }
 
 .pair-list { list-style: none; padding: 0; margin: 8px 0; font-size: 13px; font-variant-numeric: tabular-nums; }
 .pair-list li { padding: 4px 0; border-bottom: 1px solid var(--border); }
@@ -1308,10 +1320,7 @@ body[data-active-tab="cm"] #tab-cm, body[data-active-tab="business"] #tab-busine
 .pill-month { background: var(--horizon-month); }
 .pill-decisions { background: var(--horizon-decisions); }
 
-.horizon-today { border-left: 2px solid var(--horizon-today); }
-.horizon-week { border-left: 2px solid var(--horizon-week); }
-.horizon-month { border-left: 2px solid var(--horizon-month); }
-.horizon-decisions { border-left: 2px solid var(--horizon-decisions); }
+/* horizon cards — no colored borders; pill is the only marker */
 
 .draft-card, .decision-card, .action-card { background: var(--surface-2); border: none; border-radius: 8px; padding: 18px 20px; margin: 14px 0; }
 .draft-card-header { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 10px; }

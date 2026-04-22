@@ -1,7 +1,7 @@
 {
   "name": "vibra-code-lite",
   "description": "Vibra Code Lite — the open-source Claude Code plugin from Vibra. WhatsApp community intelligence for professional communities. Local-first, no API keys.",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "author": {
     "name": "Vibra",
     "url": "https://getvibra.co"
