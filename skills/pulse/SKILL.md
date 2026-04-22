@@ -24,3 +24,5 @@ Metrics it surfaces:
 - Thread stats: count, average length, average participants
 
 Report back to the user: the headline numbers (total messages, active members, response rate, concentration label) plus the file path. Offer to open the HTML.
+
+If the user wants a PDF: tell them to open the HTML in their browser and use Cmd+P (⌘P) → "Save as PDF". The stylesheet includes `@media print` rules (system fonts, single-column grid, "Powered by getvibra" page footer) so the PDF looks clean. No extra tool or dependency required.

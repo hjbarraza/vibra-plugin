@@ -1,7 +1,7 @@
 {
   "name": "vibra",
   "description": "WhatsApp community intelligence for community managers. Parse exports, generate weekly digests, surface unanswered questions — all locally, no API keys.",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": {
     "name": "YUNO"
   },

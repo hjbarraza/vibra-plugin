@@ -50,9 +50,12 @@ test('pulse HTML renders a full page with sections', () => {
   const p = buildPulse(load());
   const html = renderPulseHtml(p, { community: 'Test' });
   assert.ok(html.includes('<!doctype html>'));
-  assert.ok(html.includes('Test — pulse'));
+  assert.ok(html.includes('Test'));
+  assert.ok(html.includes('Community Pulse'));
   assert.ok(html.includes('Activity by day'));
-  assert.ok(html.includes('Heatmap'));
+  assert.ok(html.includes('heatmap'));
   assert.ok(html.includes('Top contributors'));
   assert.ok(html.includes('<svg'));
+  assert.ok(html.includes('Powered by'), 'footer branding present');
+  assert.ok(html.includes('@media print'), 'print styles for PDF export');
 });

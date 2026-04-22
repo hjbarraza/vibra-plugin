@@ -4,6 +4,19 @@ All notable changes to Vibra are documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.0.2] — 2026-04-22
+
+### Changed
+
+- **Pulse dashboard redesigned** to a Dieter Rams–inspired aesthetic — restrained palette, generous whitespace, system fonts, grid-based metric cards, single muted-blue accent (OKLCH), thin 1px borders, no gradients or shadows.
+- SVG charts refined: gridlines on the activity chart, cleaner heatmap cells.
+- Added `@media print` styles so the HTML prints to PDF cleanly via browser Cmd+P — single-column grid, system fonts, "Powered by getvibra" as running page footer.
+- Added responsive breakpoint at 720px for mobile viewing.
+
+### Added
+
+- `footer` with "Powered by getvibra" linking back to the plugin repo.
+
 ## [0.0.1] — 2026-04-22
 
 First public release — the Normal tier.
