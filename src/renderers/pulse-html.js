@@ -1120,9 +1120,9 @@ h3 { font-size: 10px; font-weight: 600; margin: 24px 0 10px; letter-spacing: 0.1
 .tab { display: none; }
 body[data-active-tab="cm"] #tab-cm, body[data-active-tab="business"] #tab-business { display: block; }
 
-.cm-grid, .business-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-.card { border: none; border-radius: 10px; padding: 28px 32px; background: var(--surface); box-shadow: var(--shadow); }
-.card.wide { grid-column: 1 / -1; }
+.cm-grid, .business-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 20px; }
+.card { border: none; border-radius: 10px; padding: 28px 32px; background: var(--surface); box-shadow: var(--shadow); grid-column: span 6; }
+.card.wide { grid-column: span 12; }
 .card-hint { color: var(--text-subtle); font-size: 13px; margin: -8px 0 18px; line-height: 1.55; max-width: 72ch; }
 
 .action-table { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
@@ -1368,6 +1368,7 @@ footer a:hover { color: var(--text); }
   h1 { font-size: 22pt; }
   .metric .value { font-size: 20pt; }
   .cm-grid, .business-grid { grid-template-columns: 1fr; }
+  .card { grid-column: span 12; }
   .health-wrap { grid-template-columns: 150px 1fr; }
   .member-intel { font-size: 9pt; }
   @page { margin: 20mm 18mm; @bottom-center { content: "Powered by Vibra · getvibra.co"; font-size: 9pt; color: #9e9688; } }
@@ -1375,6 +1376,7 @@ footer a:hover { color: var(--text); }
 
 @media (max-width: 900px) {
   .cm-grid, .business-grid, .metrics, .two-col, .topic-list, .health-wrap { grid-template-columns: 1fr !important; columns: 1 !important; }
+  .card { grid-column: span 12 !important; }
   .page { padding: 32px 20px; }
   .metrics { gap: 16px; }
   .subnav { overflow-x: auto; flex-wrap: nowrap; }

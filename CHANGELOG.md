@@ -4,6 +4,17 @@ All notable changes to Vibra Code Lite are documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.5.2] — 2026-04-22
+
+Dashboard now runs on a strict 12-column grid across both tabs, matching industry-standard layout discipline. Fixed a pre-existing test string mismatch (case sensitivity).
+
+### Changed
+
+- **12-column grid** — `.cm-grid` and `.business-grid` now use `repeat(12, 1fr)` instead of `1fr 1fr`. Cards default to `span 6` (half-width); full-width cards use `span 12`. Print and mobile breakpoints collapse all cards to `span 12` accordingly.
+- **Test fix** — `pulse.test.js` assertion corrected from `'Topic signal'` to `'topic signal'` to match actual renderer output (pre-existing mismatch).
+
+---
+
 ## [0.5.0] — 2026-04-22
 
 Dashboard redesigned around a considered Ive / Rams / Apple sensibility — cream & ink palette, SF Pro Display for numerals, generous whitespace, content-first cards without heavy chrome. Full dark mode support with toggle and system-preference detection.
