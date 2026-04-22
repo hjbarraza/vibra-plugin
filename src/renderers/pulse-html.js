@@ -355,7 +355,7 @@ function renderFooter(community, p) {
   const date = iso => iso.slice(0, 10);
   return `<footer>
   <span>${esc(community)} · ${date(p.sinceIso)} — ${date(p.untilIso)}</span>
-  <span>Powered by <a href="https://github.com/hjbarraza/vibra-plugin">getvibra</a></span>
+  <span>Powered by <a href="https://getvibra.co">Vibra</a> · the new community manager hire for professional communities</span>
 </footer>`;
 }
 
@@ -494,7 +494,7 @@ footer a:hover { color: var(--text); }
   h1 { font-size: 20pt; }
   .metric .value { font-size: 18pt; }
   .cm-grid, .business-grid { grid-template-columns: 1fr; }
-  @page { margin: 18mm 16mm; @bottom-center { content: "Powered by getvibra"; font-size: 9pt; color: #9a9a9a; } }
+  @page { margin: 18mm 16mm; @bottom-center { content: "Powered by Vibra · getvibra.co"; font-size: 9pt; color: #9a9a9a; } }
 }
 
 @media (max-width: 900px) {

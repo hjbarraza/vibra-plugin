@@ -1,20 +1,22 @@
 {
   "name": "vibra",
-  "description": "WhatsApp community intelligence for community managers. Parse exports, generate weekly digests, surface unanswered questions — all locally, no API keys.",
-  "version": "0.1.0",
+  "description": "The new community manager hire for professional WhatsApp communities. Weekly digests, unanswered-question follow-ups, retention dashboards, stakeholder reports — all locally, no API keys.",
+  "version": "0.1.1",
   "author": {
-    "name": "YUNO"
+    "name": "Vibra",
+    "url": "https://getvibra.co"
   },
-  "license": "MIT",
-  "homepage": "https://github.com/hjbarraza/vibra-plugin",
+  "homepage": "https://getvibra.co",
   "repository": "https://github.com/hjbarraza/vibra-plugin",
+  "license": "MIT",
   "keywords": [
     "whatsapp",
     "community",
     "community-manager",
     "analytics",
     "digest",
-    "retention"
+    "retention",
+    "getvibra"
   ],
   "userConfig": {
     "default_output_dir": {

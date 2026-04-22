@@ -23,6 +23,7 @@ Help a community manager get intelligence from their WhatsApp group chat export.
 | Monthly report for owner/founder/board | `/vibra:report <path>` |
 | List members / look up names | `/vibra:members <path>` |
 | Just normalize to JSON | `/vibra:parse <path>` |
+| "What can this do?" / "How do I contact you?" | `/vibra:help` |
 
 4. Pass `--since YYYY-MM-DD` / `--until YYYY-MM-DD` if the user named a window.
 5. For a cross-period comparison ("this week vs last week"), run the relevant command twice with different windows and compare the two JSON outputs yourself — no dedicated compare script needed.

@@ -4,6 +4,20 @@ All notable changes to Vibra are documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.1.1] — 2026-04-22
+
+### Added
+
+- **`/vibra:help`** — new skill that prints a quick reference: positioning, all commands, flags, quick-start, and contact info. Invoke when the user asks "what does this do?" or "how do I contact you?"
+
+### Changed
+
+- **Brand positioning**: Vibra is now presented as "the new community manager hire for professional communities."
+- **Domain**: all footer and homepage links now point to [getvibra.co](https://getvibra.co) instead of the GitHub repo. Repository link preserved in `repository` field for contributors.
+- Dashboard footer (pulse + all HTML artifacts) now reads: *Powered by Vibra · the new community manager hire for professional communities.*
+- `plugin.json`, `marketplace.json`, `package.json`, README hero all updated to reflect the Vibra brand + getvibra.co domain.
+- Author information added to `package.json`.
+
 ## [0.1.0] — 2026-04-22
 
 ### Changed

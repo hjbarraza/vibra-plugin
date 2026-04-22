@@ -101,7 +101,7 @@ footer a:hover { color: var(--text); }
   h1 { font-size: 22pt; }
   @page {
     margin: 24mm 20mm;
-    @bottom-center { content: "Powered by getvibra"; font-size: 9pt; color: #9a9a9a; }
+    @bottom-center { content: "Powered by Vibra · getvibra.co"; font-size: 9pt; color: #9a9a9a; }
   }
 }
 @media (max-width: 720px) {
@@ -133,7 +133,7 @@ ${bodyHtml}
 
 <footer>
   <span>${escape(community)}</span>
-  <span>Powered by <a href="https://github.com/hjbarraza/vibra-plugin">getvibra</a></span>
+  <span>Powered by <a href="https://getvibra.co">Vibra</a> · the new community manager hire for professional communities</span>
 </footer>
 </div>
 </body>

@@ -1,6 +1,6 @@
 {
   "name": "vibra-plugin",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "type": "module",
   "bin": {
@@ -15,6 +15,16 @@
     "vibra-members": "./bin/vibra-members.js",
     "vibra-render-html": "./bin/vibra-render-html.js"
   },
+  "homepage": "https://getvibra.co",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hjbarraza/vibra-plugin"
+  },
+  "author": {
+    "name": "Vibra",
+    "url": "https://getvibra.co"
+  },
+  "license": "MIT",
   "scripts": {
     "test": "node --test \"tests/*.test.js\""
   },

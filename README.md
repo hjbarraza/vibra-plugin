@@ -1,12 +1,12 @@
 # Vibra
 
-**Your WhatsApp community, finally readable.**
+**The new community manager hire for professional communities.**
 
-Vibra is a plugin for Claude Code that turns a WhatsApp group chat export into the artifacts a community manager actually needs: weekly digests, unanswered-question follow-up lists, member profiles, retention dashboards, newsletter content, stakeholder reports.
+Vibra is a Claude Code plugin from [Vibra](https://getvibra.co) that acts as the community manager hire for paid, invite-only, and professional WhatsApp communities. It reads a chat export and turns hours of weekly scrolling into the artifacts a CM actually needs: weekly digests, unanswered-question follow-up queues, retention dashboards, member profiles, newsletter content, and stakeholder reports.
 
 Everything runs on your laptop. No external services. No API keys. Your community data never leaves your machine.
 
-[![License: MIT](https://img.shields.io/badge/license-MIT-black)](LICENSE) [![Version](https://img.shields.io/badge/version-0.0.2-black)](CHANGELOG.md) [![Tests](https://img.shields.io/badge/tests-44%20passing-black)](tests/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-black)](LICENSE) [![Version](https://img.shields.io/badge/version-0.1.1-black)](CHANGELOG.md) [![Tests](https://img.shields.io/badge/tests-45%20passing-black)](tests/) [![Website](https://img.shields.io/badge/website-getvibra.co-black)](https://getvibra.co)
 
 ---
 
@@ -34,6 +34,7 @@ Ten skills, each mapped to one job you already do.
 | `/vibra:members` | Full member list with counts. Find exact names or audit the roster |
 | `/vibra:parse` | Normalized JSON dump of the export. For chaining with your own tools |
 | `/vibra:analyze-whatsapp` | Orchestrator — just drop a path and ask in plain language |
+| `/vibra:help` | Quick reference: what Vibra is, all commands, how to contact us |
 
 ---
 
@@ -328,4 +329,12 @@ Pull requests welcome. See `CLAUDE.md` for the tier-discipline rules we follow w
 
 ---
 
-_Built with Claude Code. Powered by getvibra._
+## About Vibra
+
+Vibra is building the new community manager hire for professional communities. The plugin you're looking at is the first public tool — a local-first Claude Code plugin that gives CMs the artifacts they already spend hours making by hand.
+
+- Website: [getvibra.co](https://getvibra.co)
+- Contact: hello@getvibra.co
+- Issues & feature requests: https://github.com/hjbarraza/vibra-plugin/issues
+
+Built with Claude Code.
