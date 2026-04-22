@@ -1,0 +1,24 @@
+{
+  "name": "getvibra",
+  "owner": {
+    "name": "YUNO"
+  },
+  "metadata": {
+    "description": "Plugins for community managers running WhatsApp communities.",
+    "version": "0.0.4"
+  },
+  "plugins": [
+    {
+      "name": "vibra",
+      "source": "./",
+      "description": "WhatsApp community intelligence — digests, unanswered questions, health dashboards, stakeholder reports. Runs locally, no API keys.",
+      "version": "0.0.4",
+      "author": { "name": "YUNO" },
+      "license": "MIT",
+      "homepage": "https://github.com/hjbarraza/vibra-plugin",
+      "repository": "https://github.com/hjbarraza/vibra-plugin",
+      "keywords": ["whatsapp", "community", "community-manager", "analytics", "digest", "retention"],
+      "category": "productivity"
+    }
+  ]
+}

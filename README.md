@@ -65,13 +65,26 @@ If Node is missing or older:
 
 ### 3. Install Vibra
 
-```bash
-# Clone somewhere you'll remember
-cd ~/Code   # or wherever you keep projects
-git clone https://github.com/hjbarraza/vibra-plugin.git
+Easiest path — install from inside Claude Code (recommended):
+
+```
+/plugin marketplace add hjbarraza/vibra-plugin
+/plugin install vibra@getvibra
 ```
 
-That's it. No `npm install`, no dependencies to compile. The plugin is ready.
+Two commands. That's it. Claude Code fetches the plugin, verifies it, and makes the `/vibra:*` skills available. Updates later with `/plugin marketplace update getvibra`.
+
+---
+
+**Alternative — clone + `--plugin-dir`** (useful for local development or if you want to inspect the code first):
+
+```bash
+cd ~/Code
+git clone https://github.com/hjbarraza/vibra-plugin.git
+claude --plugin-dir /absolute/path/to/vibra-plugin
+```
+
+No `npm install`, no dependencies to compile. Zero-dep.
 
 ---
 
@@ -229,6 +242,13 @@ Not really. Claude reads the conversation — once you've pointed it at an expor
 `./vibra-output/` by default. You can change the default during plugin setup, or pass `--output-dir ~/Documents/my-community-artifacts` per command.
 
 **How do I update Vibra?**
+
+If you installed via marketplace:
+```
+/plugin marketplace update getvibra
+```
+
+If you cloned the repo:
 ```bash
 cd /path/to/vibra-plugin
 git pull

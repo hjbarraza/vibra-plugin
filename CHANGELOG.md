@@ -4,6 +4,21 @@ All notable changes to Vibra are documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.0.4] — 2026-04-22
+
+### Added
+
+- **`marketplace.json`** — the repo now doubles as a Claude Code marketplace. Users can install via the `/plugin` interface instead of cloning:
+  ```
+  /plugin marketplace add hjbarraza/vibra-plugin
+  /plugin install vibra@getvibra
+  ```
+  Updates pulled with `/plugin marketplace update getvibra`.
+
+### Changed
+
+- README leads with the marketplace install flow (one-line) and keeps `--plugin-dir` as an alternative for local development.
+
 ## [0.0.3] — 2026-04-22
 
 ### Added
