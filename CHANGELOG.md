@@ -4,6 +4,20 @@ All notable changes to Vibra Code Lite are documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.4.1] — 2026-04-22
+
+### Removed
+
+- **Buy-signals** (the purchase-intent heuristic) removed end-to-end. Didn't generate reliable value — the Champions who showed pricing curiosity were already the top posters, so the signal duplicated what Influence + Tier already told us.
+  - Removed from `src/analyzers/personas.js` (patterns, tracking, `buyCurious` cluster, `buy-curious` tag)
+  - Removed from pulse dashboard (Revenue/buy card, Buy column in Member Intelligence table, buy-curious filter pill, Revenue entry in Business sub-nav)
+  - Removed from skill prompt guidance
+  - Strategic outreach in Month card now anchored to `topInfluence` instead.
+
+### Added
+
+- **Command reference modal** opened via <kbd>⌘K</kbd> / <kbd>Ctrl+K</kbd> or the "? Help" button in the tab bar. Shows every `/vibra-code-lite:*` command with a one-line description, all CLI flags, the `VIBRA_EXPORT` env var, and contact links. Close with <kbd>Esc</kbd>.
+
 ## [0.4.0] — 2026-04-22
 
 Dashboard reoriented around the CM's actual workflow. Pulse's CM tab is no longer a set of category cards — it's a time-indexed action brief with copy-paste drafts, pre-written intros, timed seed prompts, and binary decisions.

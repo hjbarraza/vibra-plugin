@@ -1,16 +1,6 @@
 const DAY_MS = 24 * 60 * 60 * 1000;
 const REPLY_WINDOW_MS = 30 * 60 * 1000;
 
-const BUY_SIGNAL_PATTERNS = [
-  /\$\d+|€\d+|£\d+/,
-  /\bpric(e|ing)\b|\bcuesta\b|\bcuánto\b|\bcuanto cuesta\b|\bquanto custa\b|\bcoût\b|\bcombien\b/i,
-  /\bsubscrip(tion|ción|ção)\b|\bsuscripción\b|\babonnement\b/i,
-  /\bpaid\b|\bpago\b|\bpremium\b|\bpro plan\b|\bupgrade\b|\bplan pro\b/i,
-  /\bworth (it|the)\b|\bvale la pena\b|\bvale a pena\b|\bvaut le coup\b/i,
-  /\bbuy\b|\bpurchase\b|\bcomprar\b|\bcomprarlo\b|\badquirir\b|\bacheter\b/i,
-  /\bi['´]d pay\b|\bi would pay\b|\bpagaría\b|\bpagaria\b|\bje paierais\b/i,
-];
-
 export function buildPersonas(parsedMessages, { sinceIso, untilIso, rosterSize } = {}) {
   const real = parsedMessages.filter(m => m.kind === 'message' && !m.wasDeleted && m.sender);
   const inWindow = real.filter(m => m.sentAt >= sinceIso && m.sentAt <= untilIso);
@@ -19,7 +9,7 @@ export function buildPersonas(parsedMessages, { sinceIso, untilIso, rosterSize }
   for (const m of inWindow) {
     const s = stats.get(m.sender) ?? {
       name: m.sender, messages: 0, questions: 0, repliesGiven: 0, repliesReceived: 0,
-      linksShared: 0, mediaShared: 0, buySignals: 0,
+      linksShared: 0, mediaShared: 0,
       distinctPeopleReplied: new Set(), distinctReplyers: new Set(),
       firstAt: m.sentAt, lastAt: m.sentAt,
     };
@@ -27,7 +17,6 @@ export function buildPersonas(parsedMessages, { sinceIso, untilIso, rosterSize }
     if (/[?¿]/.test(m.text ?? '')) s.questions++;
     if (/https?:\/\//.test(m.text ?? '')) s.linksShared++;
     if (m.mediaKind) s.mediaShared++;
-    if (BUY_SIGNAL_PATTERNS.some(re => re.test(m.text ?? ''))) s.buySignals++;
     if (m.sentAt < s.firstAt) s.firstAt = m.sentAt;
     if (m.sentAt > s.lastAt) s.lastAt = m.sentAt;
     stats.set(m.sender, s);
@@ -96,7 +85,6 @@ export function buildPersonas(parsedMessages, { sinceIso, untilIso, rosterSize }
     if (distinctPartners >= 5) tags.push('connector');
     if (s.linksShared >= 3) tags.push('content-sharer');
     if (isNew) tags.push('newcomer');
-    if (s.buySignals >= 2) tags.push('buy-curious');
     if (disengageRisk >= 60) tags.push('at-risk');
     if (tags.length === 0 && s.messages >= 10) tags.push('regular');
     if (tags.length === 0) tags.push('observer');
@@ -112,7 +100,6 @@ export function buildPersonas(parsedMessages, { sinceIso, untilIso, rosterSize }
       giverPct: +giverPct.toFixed(2),
       distinctPartners,
       linksShared: s.linksShared,
-      buySignals: s.buySignals,
       lastActive: s.lastAt.slice(0, 10),
       daysSinceActive,
       disengageRisk,
@@ -130,13 +117,13 @@ export function buildPersonas(parsedMessages, { sinceIso, untilIso, rosterSize }
     Lurker: rosterSize ? Math.max(0, rosterSize - activePostingSenders.size) : 0,
   };
 
-  const clusterOrder = ['helper', 'asker', 'connector', 'content-sharer', 'newcomer', 'buy-curious', 'at-risk', 'regular', 'observer'];
+  const clusterOrder = ['helper', 'asker', 'connector', 'content-sharer', 'newcomer', 'at-risk', 'regular', 'observer'];
   const clusters = {};
   for (const key of clusterOrder) {
     const list = members.filter(m => m.tags.includes(key));
     const sortKey = {
       helper: 'repliesGiven', asker: 'questions', connector: 'distinctPartners',
-      'content-sharer': 'linksShared', newcomer: 'messages', 'buy-curious': 'buySignals',
+      'content-sharer': 'linksShared', newcomer: 'messages',
       'at-risk': 'disengageRisk', regular: 'messages', observer: 'messages',
     }[key];
     clusters[key] = list.sort((a, b) => (b[sortKey] ?? 0) - (a[sortKey] ?? 0));
@@ -146,9 +133,8 @@ export function buildPersonas(parsedMessages, { sinceIso, untilIso, rosterSize }
   const atRisk = members.filter(m => m.disengageRisk >= 40).sort((a, b) => b.disengageRisk - a.disengageRisk).slice(0, 10);
   const topInfluence = [...members].sort((a, b) => b.influence - a.influence).slice(0, 10);
   const topGivers = members.filter(m => m.messages >= 5).sort((a, b) => b.giverPct - a.giverPct).slice(0, 10);
-  const buyCurious = members.filter(m => m.buySignals >= 1).sort((a, b) => b.buySignals - a.buySignals).slice(0, 10);
 
-  return { members, clusters, tierCounts, atRisk, topInfluence, topGivers, buyCurious };
+  return { members, clusters, tierCounts, atRisk, topInfluence, topGivers };
 }
 
 function percentileThreshold(sortedDesc, p) {

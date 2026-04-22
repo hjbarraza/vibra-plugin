@@ -44,6 +44,7 @@ function renderTabs() {
   return `<nav class="tabs">
   <button type="button" class="tab-btn active" data-tab="cm">For the Community Manager</button>
   <button type="button" class="tab-btn" data-tab="business">For the Business</button>
+  <button type="button" class="help-btn" id="help-btn" title="Command reference · press ⌘K / Ctrl+K">? Help <span class="kbd">⌘K</span></button>
   <button type="button" class="print-btn" onclick="window.print()" title="Print the currently active tab to PDF">Print / PDF</button>
 </nav>`;
 }
@@ -59,7 +60,6 @@ function renderBusinessNav() {
     ['network', 'Network'],
     ['stickiness', 'Stickiness'],
     ['gratitude', 'Gratitude'],
-    ['buy', 'Revenue'],
     ['topics', 'Topics'],
     ['insights', 'Insights'],
   ];
@@ -132,15 +132,15 @@ function renderWeekCard(p) {
 }
 
 function renderMonthCard(p) {
-  const buyCurious = p.personas?.buyCurious ?? [];
-  const buyLine = buyCurious.length ? `Premium-tier interview queue: <strong>${buyCurious.slice(0, 3).map(m => esc(m.name)).join(', ')}</strong>.` : '';
+  const champions = (p.personas?.topInfluence ?? []).slice(0, 3).map(m => m.name);
+  const champLine = champions.length ? `Top-influence Champions to engage strategically: <strong>${champions.map(n => esc(n)).join(', ')}</strong>.` : '';
   const funnel = p.stickiness?.funnel;
   const ghostLine = funnel && funnel.total > 0
     ? ` Stickiness funnel: ${funnel.ghost}/${funnel.total} newcomers ghosted — onboarding playbook needed.`
     : '';
   return `<div class="card wide horizon-month" id="cm-month">
   <div class="horizon-header"><span class="horizon-pill pill-month">This month</span><h2>Strategic moves</h2></div>
-  <p class="card-hint">${buyLine}${ghostLine}</p>
+  <p class="card-hint">${champLine}${ghostLine}</p>
   <div class="agent-fill" data-fill="month-plan">
     <div class="draft-placeholder">
       <p class="muted"><strong>Awaiting agent synthesis.</strong> The agent proposes 3-5 strategic moves grounded in the month's growth, retention, and buy-signal data: premium-tier interviews (with outreach drafts), an onboarding playbook if stickiness is weak, stakeholder-report talking points framed for the owner, and sub-community/product ideas grounded in topic themes.</p>
@@ -318,7 +318,6 @@ function renderBusinessTab(p) {
   ${renderNetwork(p)}
   ${renderStickiness(p)}
   ${renderGratitude(p)}
-  ${renderBuySignals(p)}
   ${renderTopics(p)}
   ${renderJtbd(p)}
   ${renderRecommendations(p)}
@@ -474,7 +473,7 @@ function renderMemberIntel(p) {
   const members = [...(p.personas?.members ?? [])].sort((a, b) => b.messages - a.messages).slice(0, 25);
   if (!members.length) return '';
   const daily = p.memberDaily?.perMember ?? {};
-  const filters = ['All', 'Champion', 'Power', 'Regular', 'at-risk', 'buy-curious'];
+  const filters = ['All', 'Champion', 'Power', 'Regular', 'at-risk'];
   const pills = filters.map((f, i) => `<button type="button" class="filter-pill${i === 0 ? ' active' : ''}" data-filter="${esc(f)}">${esc(f)}</button>`).join('');
   const rows = members.map((m, i) => {
     const sp = renderSparkline(daily[m.name] ?? []);
@@ -482,7 +481,7 @@ function renderMemberIntel(p) {
     const filterTags = [m.tier, ...(m.tags || [])].join(' ');
     return `<tr class="member-row" data-filter="${esc(filterTags)}" data-member="${esc(m.name)}"
         data-activity="${m.messages}" data-attention="${m.attention}" data-influence="${m.influence}"
-        data-giver="${m.giverPct}" data-buy="${m.buySignals}" data-risk="${m.disengageRisk}" data-last="${m.daysSinceActive}">
+        data-giver="${m.giverPct}" data-risk="${m.disengageRisk}" data-last="${m.daysSinceActive}">
       <td class="rank">${i + 1}</td>
       <td class="name"><strong class="member-link" data-member="${esc(m.name)}">${esc(m.name)}</strong></td>
       <td><span class="tier-pill tier-${tierCls}">${esc(m.tier)}</span></td>
@@ -491,13 +490,12 @@ function renderMemberIntel(p) {
       <td class="num">${m.attention}</td>
       <td class="num">${m.influence}</td>
       <td class="num">${Math.round(m.giverPct * 100)}%</td>
-      <td class="num">${m.buySignals > 0 ? m.buySignals : ''}</td>
       <td class="num risk-cell"><span style="color:${riskColor(m.disengageRisk)}">${m.disengageRisk}</span></td>
       <td class="muted">${m.daysSinceActive}d</td>
     </tr>`;
   }).join('');
   return `<h3>Member intelligence</h3>
-  <p class="card-hint">Activity (msgs) · Sparkline (per-day) · Attention (replies received) · Influence (network reach) · Giver % · Buy cues · Risk (0–100) · Last active.</p>
+  <p class="card-hint">Activity (msgs) · Sparkline (per-day) · Attention (replies received) · Influence (network reach) · Giver % · Risk (0–100) · Last active.</p>
   <div class="filter-bar">${pills}</div>
   <div class="table-scroll">
     <table class="member-intel" id="member-intel">
@@ -507,7 +505,6 @@ function renderMemberIntel(p) {
         <th class="num sortable" data-sort="attention">Attention</th>
         <th class="num sortable" data-sort="influence">Influence</th>
         <th class="num sortable" data-sort="giver">Giver</th>
-        <th class="num sortable" data-sort="buy">Buy</th>
         <th class="num sortable" data-sort="risk">Risk</th>
         <th class="num sortable" data-sort="last">Last</th>
       </tr></thead>
@@ -607,22 +604,6 @@ function renderGratitude(p) {
   <h3>Most-thanked members</h3>
   <ul>${receivers}</ul>
   ${samples ? `<h3>Sample moments</h3><ul class="samples">${samples}</ul>` : ''}
-</div>`;
-}
-
-function renderBuySignals(p) {
-  const buyCurious = p.personas?.buyCurious ?? [];
-  if (!buyCurious.length) return `<div class="card" id="sec-buy"><h2>Revenue / buy signals</h2><p class="muted">No purchase-intent cues this window.</p></div>`;
-  const rows = buyCurious.slice(0, 8).map(m => `
-    <tr>
-      <td><strong class="member-link" data-member="${esc(m.name)}">${esc(m.name)}</strong></td>
-      <td class="count">${m.buySignals} msg${m.buySignals === 1 ? '' : 's'}</td>
-      <td class="muted">Mentions pricing, subscriptions, or purchase intent</td>
-    </tr>`).join('');
-  return `<div class="card wide" id="sec-buy">
-  <h2>Revenue / buy signals</h2>
-  <p class="card-hint">Members whose messages contained purchase-intent cues (pricing, "worth it", "I'd pay…"). Target for premium-tier research.</p>
-  <table class="mini"><tbody>${rows}</tbody></table>
 </div>`;
 }
 
@@ -792,6 +773,55 @@ function renderDrillDownModal() {
     <h3 id="modal-title">Member</h3>
     <div id="modal-body"></div>
   </div>
+</div>
+${renderHelpModal()}`;
+}
+
+function renderHelpModal() {
+  const commands = [
+    { cmd: '/vibra-code-lite:pulse', desc: 'The unified dashboard (what you are looking at). Two tabs — CM workflow & Business intelligence. Rich visualizations, PDF-ready.' },
+    { cmd: '/vibra-code-lite:analyze-whatsapp', desc: 'Natural-language orchestrator — drop a file path, describe what you want, it picks the right command.' },
+    { cmd: '/vibra-code-lite:digest', desc: 'Weekly catch-up as markdown. Top threads, open asks, new members, who went quiet.' },
+    { cmd: '/vibra-code-lite:unanswered', desc: 'AI-judged list of questions that did not get a real answer. Attributed, bundled, actionable.' },
+    { cmd: '/vibra-code-lite:action-list', desc: 'Monday DM queue — silent joiners, welcome gaps, frustration signals, shoutout candidates.' },
+    { cmd: '/vibra-code-lite:content-ideas', desc: 'Newsletter fuel — best links, quotable member messages, tool mentions.' },
+    { cmd: '/vibra-code-lite:profile', desc: 'One-page dossier on a specific member. Use before a 1-on-1 or intro.', args: '--member "&lt;name&gt;"' },
+    { cmd: '/vibra-code-lite:members', desc: 'Full roster with message counts and tiers. Look up exact names or audit who is in the community.' },
+    { cmd: '/vibra-code-lite:report', desc: 'Monthly stakeholder report for the owner/founder/board.' },
+    { cmd: '/vibra-code-lite:parse', desc: 'Normalized JSON dump of the export. For chaining with other tools.' },
+    { cmd: '/vibra-code-lite:help', desc: 'Inline text reference of every command. This modal is the richer version.' },
+  ];
+
+  const rows = commands.map(c => `
+    <div class="cmd-row">
+      <div class="cmd-name"><code>${c.cmd}</code>${c.args ? ` <span class="cmd-args">${c.args}</span>` : ''}</div>
+      <div class="cmd-desc">${c.desc}</div>
+    </div>`).join('');
+
+  return `<div class="modal" id="help-modal" aria-hidden="true">
+  <div class="modal-backdrop" data-close></div>
+  <div class="modal-panel modal-wide" role="dialog" aria-labelledby="help-title">
+    <button type="button" class="modal-close" data-close aria-label="Close">×</button>
+    <h3 id="help-title">Vibra Code Lite — command reference</h3>
+    <p class="modal-hint">Plugin from <a href="https://getvibra.co">Vibra</a>. Everything runs locally. Press <span class="kbd">Esc</span> to close.</p>
+
+    <h4>Commands</h4>
+    <div class="cmd-list">${rows}</div>
+
+    <h4>Flags available on every command</h4>
+    <div class="cmd-list">
+      <div class="cmd-row"><div class="cmd-name"><code>--since YYYY-MM-DD</code></div><div class="cmd-desc">Window start date. Default is 42 days before the latest message.</div></div>
+      <div class="cmd-row"><div class="cmd-name"><code>--until YYYY-MM-DD</code></div><div class="cmd-desc">Window end date. Default is the latest message in the export.</div></div>
+      <div class="cmd-row"><div class="cmd-name"><code>--output-dir &lt;dir&gt;</code></div><div class="cmd-desc">Where to write artifacts. Default <code>./vibra-output</code>.</div></div>
+      <div class="cmd-row"><div class="cmd-name"><code>--lang &lt;code&gt;</code></div><div class="cmd-desc">Force output language (en, es, pt, fr). Default auto-detects from the community.</div></div>
+    </div>
+
+    <h4>Handy environment variable</h4>
+    <p><code>VIBRA_EXPORT=/path/to/_chat.txt</code> — set once in your shell, and every slash command picks up the path without you re-typing it.</p>
+
+    <h4>Links</h4>
+    <p>Website: <a href="https://getvibra.co">getvibra.co</a> · Issues: <a href="https://github.com/hjbarraza/vibra-code-lite/issues">github.com/hjbarraza/vibra-code-lite</a></p>
+  </div>
 </div>`;
 }
 
@@ -890,11 +920,27 @@ document.addEventListener('click', (ev) => {
   }
   if (ev.target.closest('[data-close]')) {
     modal.setAttribute('aria-hidden', 'true');
+    helpModal?.setAttribute('aria-hidden', 'true');
   }
 });
 
+const helpModal = document.getElementById('help-modal');
+const helpBtn = document.getElementById('help-btn');
+function openHelp() { helpModal?.setAttribute('aria-hidden', 'false'); }
+function closeHelp() { helpModal?.setAttribute('aria-hidden', 'true'); }
+helpBtn?.addEventListener('click', openHelp);
+
 document.addEventListener('keydown', (ev) => {
-  if (ev.key === 'Escape') modal.setAttribute('aria-hidden', 'true');
+  if (ev.key === 'Escape') {
+    modal.setAttribute('aria-hidden', 'true');
+    closeHelp();
+    return;
+  }
+  if ((ev.metaKey || ev.ctrlKey) && ev.key.toLowerCase() === 'k') {
+    ev.preventDefault();
+    if (helpModal?.getAttribute('aria-hidden') === 'false') closeHelp();
+    else openHelp();
+  }
 });
 
 document.querySelectorAll('.subnav-link').forEach(a => a.addEventListener('click', (ev) => {
@@ -1161,6 +1207,21 @@ body[data-active-tab="cm"] #tab-cm, body[data-active-tab="business"] #tab-busine
 .kv-dl { display: grid; grid-template-columns: 140px 1fr; gap: 8px 16px; font-size: 13px; margin: 0 0 16px; }
 .kv-dl dt { color: var(--text-muted); }
 .kv-dl dd { margin: 0; font-variant-numeric: tabular-nums; }
+
+.help-btn { background: transparent; border: 1px solid var(--border); padding: 6px 10px; border-radius: 3px; cursor: pointer; font-size: 12px; color: var(--text-muted); font-family: inherit; margin-left: auto; display: inline-flex; align-items: center; gap: 6px; }
+.help-btn:hover { color: var(--text); border-color: var(--border-strong); }
+.print-btn { margin-left: 8px !important; }
+.kbd { display: inline-block; padding: 1px 5px; border-radius: 3px; background: var(--surface); border: 1px solid var(--border); font-family: 'SF Mono', ui-monospace, Menlo, monospace; font-size: 10px; color: var(--text-muted); min-width: 24px; text-align: center; }
+
+.modal-wide { max-width: 720px; max-height: 80vh; overflow-y: auto; }
+.modal-panel h4 { font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-subtle); margin: 24px 0 10px; }
+.modal-hint { font-size: 12px; color: var(--text-muted); margin: 0 0 16px; }
+.cmd-list { display: grid; gap: 6px; }
+.cmd-row { display: grid; grid-template-columns: 260px 1fr; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+.cmd-row:last-child { border-bottom: none; }
+.cmd-name code { font-size: 11px; }
+.cmd-args { color: var(--text-subtle); font-family: 'SF Mono', ui-monospace, Menlo, monospace; font-size: 10px; }
+.cmd-desc { color: var(--text-muted); line-height: 1.45; }
 
 .agent-fill { border-left: 2px solid var(--accent-soft); padding-left: 14px; margin-top: 18px; }
 .agent-fill.card { border-left-width: 2px; }

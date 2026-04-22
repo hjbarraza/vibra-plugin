@@ -25,7 +25,7 @@ Step 2 — read the JSON. Key blocks for synthesis:
 - `actions.*` — at-risk, silent joiners, welcome gaps, frustration, shoutout candidates.
 - `openQuestionBundles` — candidate asks grouped by context window.
 - `asksOffers.possibleIntros` — unmatched ask↔offer pairs (for intros).
-- `personas.buyCurious`, `personas.atRisk` — buy-signal and churn-risk members.
+- `personas.atRisk` — churn-risk members. `personas.topInfluence` — highest-reach members.
 - `stickiness.ghosts` + `stickiness.funnel` — newcomer retention gap.
 - `gratitude.topReceivers` — most-thanked members.
 - `content.quotableCandidates`, `content.links` — newsletter fuel.
@@ -77,7 +77,7 @@ Three subsections as separate blocks:
 <ol class="week-list">
   <li>
     <strong>[Day abbreviation, HH:MM — pick from peakWindows]</strong>: <em>"[the actual prompt text ready to paste, in community language]"</em>
-    <div class="why-data">Expected: [what should happen — "converts buy-curious into public discussion" / "revives [dormant topic] with highest-attention member"]</div>
+    <div class="why-data">Expected: [what should happen — "invites Power-tier into public discussion"" / "revives [dormant topic] with highest-attention member"]</div>
   </li>
   ...
 </ol>
@@ -88,7 +88,7 @@ Anchor each prompt to a peak window from `cmContext.peakWindows`. Mix prompt typ
 - Pose a question that invites Champions + Power-tier replies
 - Ask for show-and-tell (leverages the share-heavy content mix if present)
 - Ask for meta-reflection ("what's one thing you tried this week that didn't work?")
-- Directly target buy-curious members ("what would you pay for?")
+- Directly target top-influence Champions with a "what would you pay for" question if a premium-tier idea is on the table
 
 **Thread follow-ups (1–3)** — which threads from `topThreads` deserve a revisit, close-out, or pinning.
 
@@ -110,7 +110,7 @@ Anchor each prompt to a peak window from `cmContext.peakWindows`. Mix prompt typ
 ```
 
 Must include when the data supports:
-- **Premium-tier interview outreach** — use `personas.buyCurious`. Draft the outreach DM text.
+- **Strategic outreach to Champions** — use `personas.topInfluence` (top 3). Draft personalized DM text to pick their brain on what they need / would pay for / want more of.
 - **Onboarding playbook** if `stickiness.funnel.ghost / funnel.total` > 0.3.
 - **Stakeholder report pre-brief** — growth narrative + 3 talking points using `growth.previousPeriod`.
 - **Sub-community or product idea** — grounded in top topic themes.
@@ -135,7 +135,7 @@ Types to consider:
 - **Promote [moderator candidate] to co-moderator?** (use `cmContext.moderatorCandidates`)
 - **Lock / redirect a drifting thread** (from `topThreads`)
 - **Feature [member's message/thread] in the newsletter?**
-- **Launch pricing experiment?** (if `personas.buyCurious` > 0)
+- **Launch pricing experiment?** (if Champions signal appetite during the outreach)
 - **Pin the high-engagement thread for onboarding?**
 
 ### 3e–3g — the existing placeholders
@@ -161,5 +161,5 @@ Print a short summary:
 - Every message draft must be copy-paste ready — no `[PLACEHOLDER]` tokens, no `<your text here>`, no "tone-match this yourself" notes.
 - Draft language = community dominant language. Voice = CM's voice from samples.
 - Never invent members or topics not in the JSON.
-- If a section has no supporting data (e.g., no buy-curious members), write one card saying "No signal this window" rather than fabricating.
+- If a section has no supporting data, write one card saying "No signal this window" rather than fabricating.
 - Each draft uses the `id="<section>-<index>"` pattern on the `.draft-text` so the Copy button works.

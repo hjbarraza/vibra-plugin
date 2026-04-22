@@ -6,14 +6,14 @@
   },
   "metadata": {
     "description": "Open-source plugins from Vibra (https://getvibra.co) — the new community manager hire for professional communities.",
-    "version": "0.4.0"
+    "version": "0.4.1"
   },
   "plugins": [
     {
       "name": "vibra-code-lite",
       "source": "./",
       "description": "Vibra Code Lite — WhatsApp community intelligence plugin for Claude Code. Local-first, no API keys.",
-      "version": "0.4.0",
+      "version": "0.4.1",
       "author": { "name": "Vibra", "url": "https://getvibra.co" },
       "license": "MIT",
       "homepage": "https://getvibra.co",
