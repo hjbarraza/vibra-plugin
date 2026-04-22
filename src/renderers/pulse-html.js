@@ -73,16 +73,94 @@ function renderBusinessNav() {
 
 function renderCmTab(p) {
   return `
+<nav class="cm-subnav">
+  <a href="#cm-today" class="subnav-link">Today</a>
+  <a href="#cm-week" class="subnav-link">This week</a>
+  <a href="#cm-month" class="subnav-link">This month</a>
+  <a href="#cm-decisions" class="subnav-link">Decisions</a>
+  <a href="#cm-data" class="subnav-link">Supporting data</a>
+</nav>
 <div class="cm-grid">
-  ${renderActionQueue(p)}
-  ${renderAtRisk(p)}
-  ${renderAsksOffersIntros(p)}
-  ${renderOpenQuestions(p)}
-  ${renderTopThreads(p)}
-  ${renderContentCards(p)}
-  ${renderQuietAndNew(p)}
+  ${renderTodayCard(p)}
+  ${renderWeekCard(p)}
+  ${renderMonthCard(p)}
+  ${renderDecisionsCard(p)}
 </div>
+<details class="supporting" id="cm-data">
+  <summary>Supporting data — at-risk, open questions, threads, content, membership</summary>
+  <div class="cm-grid supporting-grid">
+    ${renderActionQueue(p)}
+    ${renderAtRisk(p)}
+    ${renderAsksOffersIntros(p)}
+    ${renderOpenQuestions(p)}
+    ${renderTopThreads(p)}
+    ${renderContentCards(p)}
+    ${renderQuietAndNew(p)}
+  </div>
+</details>
 `;
+}
+
+function renderTodayCard(p) {
+  const cm = p.cmContext?.cmName;
+  const cmLine = cm ? `Inferred CM: <strong>${esc(cm)}</strong> (highest-influence senior member). ` : '';
+  return `<div class="card wide horizon-today" id="cm-today">
+  <div class="horizon-header"><span class="horizon-pill pill-today">Today</span><h2>Your action brief</h2></div>
+  <p class="card-hint">${cmLine}3-5 specific moves for the next few hours. Each has copy-paste text tone-matched to the CM's voice.</p>
+  <div class="agent-fill" data-fill="today-actions">
+    <div class="draft-placeholder">
+      <p class="muted"><strong>Awaiting agent synthesis.</strong> Inside Claude Code, the agent reads the at-risk members, asks/offers, gratitude signals, recent activity, and the CM's voice samples, then drafts 3-5 specific actions for today: who to DM (with the text), intros to make (with the intro copy), public shoutouts (with the post), all timed and prioritized.</p>
+    </div>
+  </div>
+</div>`;
+}
+
+function renderWeekCard(p) {
+  const peaks = p.cmContext?.peakWindows ?? [];
+  const peakLine = peaks.length ? `Peak posting windows detected: <strong>${peaks.map(pk => pk.label).join(' · ')}</strong>.` : '';
+  const dormant = p.cmContext?.dormantTopics ?? [];
+  const dormLine = dormant.length ? ` Dormant topics worth reviving: <strong>${dormant.slice(0, 3).map(d => esc(d.token)).join(', ')}</strong>.` : '';
+  return `<div class="card wide horizon-week" id="cm-week">
+  <div class="horizon-header"><span class="horizon-pill pill-week">This week</span><h2>7-day plan</h2></div>
+  <p class="card-hint">Seed prompts with timing, thread follow-ups, newsletter picks. ${peakLine}${dormLine}</p>
+  <div class="agent-fill" data-fill="week-plan">
+    <div class="draft-placeholder">
+      <p class="muted"><strong>Awaiting agent synthesis.</strong> The agent writes 5-7 specific seed prompts with suggested posting times anchored to the peak windows above, 2-3 thread follow-ups from last week, and newsletter feature nominations — each grounded in topic signal, engagement data, dormant topics worth reviving, and the community's dominant language.</p>
+    </div>
+  </div>
+</div>`;
+}
+
+function renderMonthCard(p) {
+  const buyCurious = p.personas?.buyCurious ?? [];
+  const buyLine = buyCurious.length ? `Premium-tier interview queue: <strong>${buyCurious.slice(0, 3).map(m => esc(m.name)).join(', ')}</strong>.` : '';
+  const funnel = p.stickiness?.funnel;
+  const ghostLine = funnel && funnel.total > 0
+    ? ` Stickiness funnel: ${funnel.ghost}/${funnel.total} newcomers ghosted — onboarding playbook needed.`
+    : '';
+  return `<div class="card wide horizon-month" id="cm-month">
+  <div class="horizon-header"><span class="horizon-pill pill-month">This month</span><h2>Strategic moves</h2></div>
+  <p class="card-hint">${buyLine}${ghostLine}</p>
+  <div class="agent-fill" data-fill="month-plan">
+    <div class="draft-placeholder">
+      <p class="muted"><strong>Awaiting agent synthesis.</strong> The agent proposes 3-5 strategic moves grounded in the month's growth, retention, and buy-signal data: premium-tier interviews (with outreach drafts), an onboarding playbook if stickiness is weak, stakeholder-report talking points framed for the owner, and sub-community/product ideas grounded in topic themes.</p>
+    </div>
+  </div>
+</div>`;
+}
+
+function renderDecisionsCard(p) {
+  const mods = p.cmContext?.moderatorCandidates ?? [];
+  const modLine = mods.length ? `Potential moderator promotions: <strong>${mods.map(m => esc(m.name)).join(', ')}</strong>.` : '';
+  return `<div class="card wide horizon-decisions" id="cm-decisions">
+  <div class="horizon-header"><span class="horizon-pill pill-decisions">Decisions</span><h2>Blocking questions</h2></div>
+  <p class="card-hint">${modLine} Binary yes/no questions — each gets pro/con grounded in data so you can pick without re-analyzing.</p>
+  <div class="agent-fill" data-fill="decisions">
+    <div class="draft-placeholder">
+      <p class="muted"><strong>Awaiting agent synthesis.</strong> The agent surfaces 3-5 decisions grounded in the data: promotions (like the moderator candidates above), thread moderation (lock, feature, redirect?), newsletter selections, pricing experiments. Each as a clear yes/no question with pro/con rooted in specific numbers and member names.</p>
+    </div>
+  </div>
+</div>`;
 }
 
 function renderActionQueue(p) {
@@ -449,12 +527,12 @@ function renderNetwork(p) {
   const maxInfluence = Math.max(1, ...nodes.map(n => n.influence));
   const maxWeight = Math.max(1, ...edges.map(e => e.weight));
 
-  const edgeSvg = edges.map(e => {
+  const edgeSvg = edges.map((e, i) => {
     const a = posMap.get(e.source); const b = posMap.get(e.target);
     if (!a || !b) return '';
     const w = 0.5 + (e.weight / maxWeight) * 2.8;
-    const opacity = 0.15 + (e.weight / maxWeight) * 0.6;
-    return `<line x1="${a.x.toFixed(1)}" y1="${a.y.toFixed(1)}" x2="${b.x.toFixed(1)}" y2="${b.y.toFixed(1)}" stroke="#1a1a1a" stroke-width="${w.toFixed(2)}" stroke-opacity="${opacity.toFixed(2)}"/>`;
+    const opacity = 0.15 + (e.weight / maxWeight) * 0.55;
+    return `<line class="net-edge" data-a="${esc(e.source)}" data-b="${esc(e.target)}" x1="${a.x.toFixed(1)}" y1="${a.y.toFixed(1)}" x2="${b.x.toFixed(1)}" y2="${b.y.toFixed(1)}" stroke="#1a1a1a" stroke-width="${w.toFixed(2)}" stroke-opacity="${opacity.toFixed(2)}"/>`;
   }).join('');
 
   const nodeSvg = positions.map(pos => {
@@ -463,18 +541,22 @@ function renderNetwork(p) {
     const r = 4 + (n.influence / maxInfluence) * 18;
     const color = tierColor(n.tier);
     return `<g class="node" data-member="${esc(n.id)}">
-      <circle cx="${pos.x.toFixed(1)}" cy="${pos.y.toFixed(1)}" r="${r.toFixed(1)}" fill="${color}" stroke="#fff" stroke-width="1.5"><title>${esc(n.id)} · ${n.tier} · ${n.messages} msgs · inf ${n.influence}</title></circle>
-      <text x="${pos.x.toFixed(1)}" y="${(pos.y + r + 10).toFixed(1)}" text-anchor="middle" font-size="9" fill="#1a1a1a">${esc(shortName(n.id))}</text>
+      <circle cx="${pos.x.toFixed(1)}" cy="${pos.y.toFixed(1)}" r="${r.toFixed(1)}" fill="${color}" stroke="#fff" stroke-width="1.5"><title>${esc(n.id)} · ${n.tier} · ${n.messages} msgs · influence ${n.influence}</title></circle>
+      <text x="${pos.x.toFixed(1)}" y="${(pos.y + r + 10).toFixed(1)}" text-anchor="middle" font-size="9" fill="#1a1a1a" pointer-events="none">${esc(shortName(n.id))}</text>
     </g>`;
   }).join('');
+
+  const tierLegend = ['Champion', 'Power', 'Regular', 'Occasional', 'One-time']
+    .map(t => `<span class="legend-chip"><span class="legend-dot" style="background:${tierColor(t)}"></span>${t}</span>`).join('');
 
   const pairs = p.network.topPairs.slice(0, 8).map(e => `<li><strong class="member-link" data-member="${esc(e.a)}">${esc(e.a)}</strong> ⟷ <strong class="member-link" data-member="${esc(e.b)}">${esc(e.b)}</strong> <span class="when">${e.count}x</span></li>`).join('');
 
   return `<div class="card wide" id="sec-network">
   <h2>Network map</h2>
-  <p class="card-hint">Node size = influence. Color = engagement tier. Edge thickness = interaction count. Hover a circle for details.</p>
+  <p class="card-hint">Node size = influence. Color = tier. Edge thickness = interaction count. <strong>Click a node</strong> to highlight its neighborhood. <strong>Click empty space</strong> to clear.</p>
+  <div class="legend">${tierLegend}</div>
   <div class="network-wrap">
-    <svg viewBox="0 0 900 520" class="network-svg">${edgeSvg}${nodeSvg}</svg>
+    <svg viewBox="0 0 900 520" class="network-svg" id="network-svg">${edgeSvg}${nodeSvg}</svg>
   </div>
   <h3>Top interaction pairs</h3>
   <ul class="pair-list">${pairs}</ul>
@@ -819,8 +901,70 @@ document.querySelectorAll('.subnav-link').forEach(a => a.addEventListener('click
   ev.preventDefault();
   const id = a.getAttribute('href').slice(1);
   const el = document.getElementById(id);
-  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (el) {
+    if (el.tagName === 'DETAILS') el.open = true;
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
 }));
+
+// Network map: click node to highlight neighborhood
+const netSvg = document.getElementById('network-svg');
+if (netSvg) {
+  let activeNode = null;
+  netSvg.addEventListener('click', (ev) => {
+    const node = ev.target.closest('.node');
+    if (!node) {
+      activeNode = null;
+      netSvg.querySelectorAll('.node, .net-edge').forEach(el => {
+        el.style.opacity = '';
+      });
+      return;
+    }
+    const name = node.dataset.member;
+    if (activeNode === name) {
+      activeNode = null;
+      netSvg.querySelectorAll('.node, .net-edge').forEach(el => { el.style.opacity = ''; });
+      return;
+    }
+    activeNode = name;
+    const connected = new Set([name]);
+    netSvg.querySelectorAll('.net-edge').forEach(e => {
+      if (e.dataset.a === name || e.dataset.b === name) {
+        connected.add(e.dataset.a);
+        connected.add(e.dataset.b);
+        e.style.opacity = '1';
+      } else {
+        e.style.opacity = '0.05';
+      }
+    });
+    netSvg.querySelectorAll('.node').forEach(n => {
+      n.style.opacity = connected.has(n.dataset.member) ? '1' : '0.2';
+    });
+  });
+}
+
+// Copy buttons: any button with data-copy copies the associated target's text
+document.addEventListener('click', (ev) => {
+  const btn = ev.target.closest('[data-copy]');
+  if (!btn) return;
+  const targetId = btn.dataset.copy;
+  const target = document.getElementById(targetId);
+  if (!target) return;
+  const text = target.innerText || target.textContent || '';
+  navigator.clipboard?.writeText(text).then(() => {
+    const original = btn.textContent;
+    btn.textContent = 'Copied';
+    setTimeout(() => { btn.textContent = original; }, 1200);
+  });
+});
+
+// Dismiss buttons: hide the parent card-like block (session only)
+document.addEventListener('click', (ev) => {
+  const btn = ev.target.closest('[data-dismiss]');
+  if (!btn) return;
+  const target = btn.closest('.draft-card, .decision-card, .action-card');
+  if (target) target.style.display = 'none';
+});
 `;
 
 // ============================================================================
@@ -1020,8 +1164,48 @@ body[data-active-tab="cm"] #tab-cm, body[data-active-tab="business"] #tab-busine
 
 .agent-fill { border-left: 2px solid var(--accent-soft); padding-left: 14px; margin-top: 18px; }
 .agent-fill.card { border-left-width: 2px; }
-.jtbd-list, .reco-list { padding-left: 20px; margin: 8px 0; }
-.jtbd-list li, .reco-list li { margin: 10px 0; }
+.jtbd-list, .reco-list, .today-list, .week-list, .month-list, .decisions-list { padding-left: 20px; margin: 8px 0; }
+.jtbd-list li, .reco-list li, .today-list li, .week-list li, .month-list li, .decisions-list li { margin: 12px 0; }
+.draft-placeholder { padding: 12px 14px; background: var(--surface); border-radius: 4px; }
+
+.cm-subnav { display: flex; flex-wrap: wrap; gap: 2px; padding: 12px 0 8px; margin: 0 0 20px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--bg); z-index: 10; }
+
+.horizon-header { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
+.horizon-header h2 { margin: 0; }
+.horizon-pill { display: inline-block; padding: 3px 10px; border-radius: 10px; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #fff; }
+.pill-today { background: oklch(55% 0.16 30); }
+.pill-week { background: oklch(55% 0.13 250); }
+.pill-month { background: oklch(55% 0.14 145); }
+.pill-decisions { background: oklch(55% 0.14 300); }
+
+.horizon-today { border-left: 3px solid oklch(55% 0.16 30); }
+.horizon-week { border-left: 3px solid oklch(55% 0.13 250); }
+.horizon-month { border-left: 3px solid oklch(55% 0.14 145); }
+.horizon-decisions { border-left: 3px solid oklch(55% 0.14 300); }
+
+.draft-card, .decision-card, .action-card { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 14px 16px; margin: 10px 0; }
+.draft-card-header { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 8px; }
+.draft-card-header h4 { font-size: 13px; font-weight: 600; margin: 0; color: var(--text); text-transform: none; letter-spacing: 0; }
+.draft-card-meta { font-size: 11px; color: var(--text-subtle); }
+.draft-text { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 10px 12px; font-size: 13px; color: var(--text); margin: 8px 0; white-space: pre-wrap; }
+.draft-actions { display: flex; gap: 8px; margin-top: 8px; }
+.btn-copy, .btn-dismiss { background: transparent; border: 1px solid var(--border); padding: 4px 10px; border-radius: 3px; cursor: pointer; font-size: 11px; color: var(--text-muted); font-family: inherit; letter-spacing: 0.04em; text-transform: uppercase; }
+.btn-copy:hover, .btn-dismiss:hover { color: var(--text); border-color: var(--border-strong); }
+.btn-copy { background: var(--text); color: var(--bg); border-color: var(--text); }
+.btn-copy:hover { background: oklch(25% 0.01 250); color: #fff; }
+.why-data { font-size: 11px; color: var(--text-subtle); margin-top: 6px; font-style: italic; }
+
+.supporting { margin-top: 24px; border-top: 1px solid var(--border); padding-top: 12px; }
+.supporting summary { cursor: pointer; font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-subtle); padding: 8px 0; user-select: none; }
+.supporting summary:hover { color: var(--text); }
+.supporting[open] summary { color: var(--text); margin-bottom: 16px; }
+.supporting-grid { margin-top: 8px; }
+
+.legend { display: flex; flex-wrap: wrap; gap: 12px; margin: 8px 0 12px; font-size: 11px; }
+.legend-chip { display: inline-flex; align-items: center; gap: 5px; color: var(--text-muted); }
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.net-edge { transition: opacity 0.15s; }
+.node { transition: opacity 0.15s; }
 
 code { font-family: 'SF Mono', ui-monospace, Menlo, monospace; font-size: 0.88em; background: var(--surface); padding: 1px 5px; border-radius: 3px; border: 1px solid var(--border); }
 

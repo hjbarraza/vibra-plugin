@@ -5,7 +5,7 @@ argument-hint: <path-to-export.txt> [--since YYYY-MM-DD] [--until YYYY-MM-DD]
 allowed-tools: Bash(vibra-pulse.js *)
 ---
 
-Pulse is the plugin's primary visual artifact. It aggregates data from every other analyzer and produces a tabbed HTML dashboard. Default window is 6 weeks (42 days) of data.
+Pulse is the plugin's primary visual artifact. Aggregates data from every other analyzer and produces a tabbed HTML dashboard. Default window is 6 weeks (42 days).
 
 Step 1 — run the script:
 
@@ -13,97 +13,153 @@ Step 1 — run the script:
 vibra-pulse.js $ARGUMENTS
 ```
 
-The script writes TWO outputs to `./vibra-output/`:
-- `pulse-<slug>-<date>.json` — all computed data (vitals, roster, actions, questions, threads, content, personas, topics, growth)
-- `pulse-<slug>-<date>.html` — the unified dashboard. CM tab is fully rendered from the JSON. Business tab is rendered with a persona table + topic tokens, plus **four placeholder sections** that you fill in.
+The script writes `pulse-<slug>-<date>.json` (all data) and `pulse-<slug>-<date>.html` (dashboard with agent-fill placeholders).
 
-Step 2 — read the JSON. Rich data structure. Key blocks you'll synthesize from:
+Step 2 — read the JSON. Key blocks for synthesis:
 
-- `personas.clusters` — heuristic classification: `helper`, `asker`, `connector`, `content-sharer`, `regular`, `newcomer`, `observer`, plus `lurker_count`
-- `personas.members` — per-member tags with stats
-- `topics.topTokens` — top keyword-frequency tokens with distinct-member counts and 3 sample messages each
-- `actions.frustrationCandidates` — heuristic-flagged frustration messages
-- `actions.shoutoutCandidates`, `silentJoiners`, `longSilentMembers`, `welcomeGaps`
-- `openQuestionBundles` — candidate questions grouped by shared context windows
-- `content.quotableCandidates`, `content.links`, `content.mentions`
-- `roster`, `gini`, `responseRate`, `growth.previousPeriod`
-- `memberList` — top 30 members by message count in window
+- `cmContext.cmName` — inferred CM (highest-influence senior member). Use this person's voice for drafts.
+- `cmContext.voiceSamples` — 3-6 recent messages from the CM. Study tone, sentence length, emoji use, em-dashes, Spanish/English mix. Mirror in your drafts.
+- `cmContext.peakWindows` — top 3 day×hour windows. Use for timing suggestions.
+- `cmContext.moderatorCandidates` — Power-tier helpers with tenure >30d. For decisions.
+- `cmContext.dormantTopics` — topics that went quiet. For seed prompts.
+- `actions.*` — at-risk, silent joiners, welcome gaps, frustration, shoutout candidates.
+- `openQuestionBundles` — candidate asks grouped by context window.
+- `asksOffers.possibleIntros` — unmatched ask↔offer pairs (for intros).
+- `personas.buyCurious`, `personas.atRisk` — buy-signal and churn-risk members.
+- `stickiness.ghosts` + `stickiness.funnel` — newcomer retention gap.
+- `gratitude.topReceivers` — most-thanked members.
+- `content.quotableCandidates`, `content.links` — newsletter fuel.
+- `topThreads` — highest-engagement threads with messages.
+- `roster`, `gini`, `responseRate`, `healthScore`, `growth.previousPeriod` — headline context.
+- `topics.topTokens` — keyword signal.
 
-Step 3 — synthesize the four Business-tab placeholder sections.
+Step 3 — synthesize SEVEN agent-fill sections. Use Edit to replace each placeholder.
 
-Each placeholder is a `<div class="agent-fill" data-fill="<key>">` block in the HTML. Find each one by its `data-fill` attribute and use Edit to replace the inner content (keep the `<div class="agent-fill" ...>` wrapper intact; replace only the `<h3>` + `<p class="muted">...</p>` inside).
+Language rule: use the community's dominant language (detect from message samples). Spanish-heavy community → Spanish drafts. English → English. Mixed → match the CM's preferred language from their voice samples.
 
-**3a — `data-fill="persona-narrative"`**
-For each non-empty cluster, write one short paragraph (2-3 sentences) describing who these members are, what they seem to need, how they engage. Ground each observation in the actual members listed in the cluster (by name). Use the community's dominant language.
+Voice rule: every DM / public post / intro draft must mirror the CM's tone (from `cmContext.voiceSamples`). Sentence length, emoji frequency, formality, em-dash habits, language blend.
 
-Expected HTML to write inside the wrapper:
+### 3a — `data-fill="today-actions"` (Today card)
+
+Draft 3–5 specific actions for today. Each action = one card. Use this HTML shape per action:
+
 ```html
-<h3>Persona narrative</h3>
-<p><strong>Helpers (N)</strong>: <your 2-3 sentence narrative, referencing specific helpers>.</p>
-<p><strong>Askers (N)</strong>: ...</p>
-... (one paragraph per non-empty cluster, plus one on lurkers if lurker_count > 0)
+<div class="action-card">
+  <div class="draft-card-header">
+    <h4>🚨 DM [Member Name]</h4>
+    <span class="draft-card-meta">Priority: High · ~2 min</span>
+  </div>
+  <div class="draft-text" id="today-1">[the actual message text, copy-paste ready, in the community's dominant language, tone-matched]</div>
+  <div class="why-data">Why: [one sentence citing specific data — "joined 40d ago, never posted, in roster but 2/3 stickiness funnel is ghost"]</div>
+  <div class="draft-actions">
+    <button type="button" class="btn-copy" data-copy="today-1">Copy</button>
+    <button type="button" class="btn-dismiss" data-dismiss>Dismiss</button>
+  </div>
+</div>
 ```
 
-**3b — `data-fill="topic-themes"`**
-Read `topics.topTokens` with their samples. Group related tokens into 3-6 semantic themes (e.g., tokens `cursor`, `claude`, `api`, `openrouter` → theme "AI developer tooling"). For each theme:
-- Label it
-- List the tokens that belong to it
-- One sentence on what it reveals about the community's focus
+Types of today-actions to consider (pick what the data supports):
+- **DMs to at-risk members** — use `actions.longSilentMembers` + `personas.atRisk`. Draft a warm, specific check-in that doesn't feel automated.
+- **Intros to make** — from `asksOffers.possibleIntros`. Write the intro text ready to paste into the group.
+- **Public shoutouts** — from `gratitude.topReceivers` + `personas.topInfluence`. Specific thank-you post.
+- **Re-engagement on open questions** — from `openQuestionBundles`. Nudge the right expert to reply.
 
-Expected HTML:
+Prioritize by impact × urgency. Put the most important one first.
+
+### 3b — `data-fill="week-plan"` (This week card)
+
+Three subsections as separate blocks:
+
+**Seed prompts (5-7)** — list with timing:
+
 ```html
-<h3>Topic themes</h3>
-<p><strong>Theme label</strong> (<tokens>): <what this says about the community>.</p>
-... (3-6 themes)
-```
-
-Use the community's dominant language.
-
-**3c — Find the full card, `data-fill="jtbd"`**
-Synthesize 3-5 jobs-to-be-done. A JTBD is "when <situation>, I want to <motivation>, so I can <outcome>." Extract from: questions asked (`openQuestionBundles` + `content.mentions`), frustration candidates, topic themes, and the mix of link-sharing vs asking.
-
-Replace the inner `<p class="muted">...</p>` with:
-```html
-<ul class="jtbd-list">
-  <li><strong>When I'm [situation]</strong>, I want to [motivation], <em>so I can [outcome]</em>. Grounded in: [specific evidence — member names, topic tokens, etc.]</li>
-  ... 3-5 items
-</ul>
-```
-
-Categorize by type when natural: functional, emotional, social.
-
-**3d — Find the full card, `data-fill="recommendations"`**
-Write 3-5 strategic observations for the business / owner. Each should be:
-- Concrete (specific action, not a platitude)
-- Grounded (cites evidence from the data — growth %, roster ratio, topic theme, specific members)
-- Actionable (something the owner or CM can actually do next quarter)
-
-Categories to consider: engagement health, retention risk, content strategy, sub-community opportunities, pricing/value signals, moderation.
-
-Expected HTML:
-```html
-<ol class="reco-list">
-  <li><strong>Headline</strong>: Observation grounded in data (cite specific numbers/names). <em>Suggested move</em>: concrete action.</li>
-  ... 3-5 items
+<h3>Seed prompts</h3>
+<ol class="week-list">
+  <li>
+    <strong>[Day abbreviation, HH:MM — pick from peakWindows]</strong>: <em>"[the actual prompt text ready to paste, in community language]"</em>
+    <div class="why-data">Expected: [what should happen — "converts buy-curious into public discussion" / "revives [dormant topic] with highest-attention member"]</div>
+  </li>
+  ...
 </ol>
 ```
 
-Step 4 — also fill the CM-tab `openQuestionBundles` LLM judgment if time allows. Optional for v0.1: users can run `/vibra-code-lite:unanswered` for the full judged list.
+Anchor each prompt to a peak window from `cmContext.peakWindows`. Mix prompt types:
+- Revive a dormant topic (from `cmContext.dormantTopics`)
+- Pose a question that invites Champions + Power-tier replies
+- Ask for show-and-tell (leverages the share-heavy content mix if present)
+- Ask for meta-reflection ("what's one thing you tried this week that didn't work?")
+- Directly target buy-curious members ("what would you pay for?")
 
-Step 5 — report back to the user. Summary:
-- Community + window
-- Headline numbers (active/roster, response rate, concentration, growth delta)
-- Number of personas clusters populated
-- Number of topic themes written
-- Number of JTBD items + recommendations
+**Thread follow-ups (1–3)** — which threads from `topThreads` deserve a revisit, close-out, or pinning.
+
+**Newsletter feature nominations (2–4)** — specific messages or threads to republish. Each with source member name + why.
+
+### 3c — `data-fill="month-plan"` (This month card)
+
+3–5 strategic moves grounded in the month's data. Each move = one card:
+
+```html
+<div class="decision-card">
+  <div class="draft-card-header">
+    <h4>[Move name]</h4>
+    <span class="draft-card-meta">[time investment estimate]</span>
+  </div>
+  <p>[one paragraph — what, why, how, expected outcome]</p>
+  <div class="why-data">Grounded in: [specific data cites]</div>
+</div>
+```
+
+Must include when the data supports:
+- **Premium-tier interview outreach** — use `personas.buyCurious`. Draft the outreach DM text.
+- **Onboarding playbook** if `stickiness.funnel.ghost / funnel.total` > 0.3.
+- **Stakeholder report pre-brief** — growth narrative + 3 talking points using `growth.previousPeriod`.
+- **Sub-community or product idea** — grounded in top topic themes.
+
+### 3d — `data-fill="decisions"` (Decisions card)
+
+3–5 binary yes/no questions. Each decision = one card:
+
+```html
+<div class="decision-card">
+  <div class="draft-card-header">
+    <h4>[The yes/no question]</h4>
+    <span class="draft-card-meta">Decide by: [timeframe]</span>
+  </div>
+  <p><strong>Pro:</strong> [one sentence grounded in data]</p>
+  <p><strong>Con:</strong> [one sentence grounded in data]</p>
+  <div class="why-data">Grounded in: [specific cites]</div>
+</div>
+```
+
+Types to consider:
+- **Promote [moderator candidate] to co-moderator?** (use `cmContext.moderatorCandidates`)
+- **Lock / redirect a drifting thread** (from `topThreads`)
+- **Feature [member's message/thread] in the newsletter?**
+- **Launch pricing experiment?** (if `personas.buyCurious` > 0)
+- **Pin the high-engagement thread for onboarding?**
+
+### 3e–3g — the existing placeholders
+
+- `data-fill="topic-themes"` — cluster top tokens into 3-6 semantic themes.
+- `data-fill="jtbd"` — 5-6 jobs-to-be-done grounded in asks, frustrations, topics.
+- `data-fill="recommendations"` — 5-6 strategic observations for the owner/founder.
+
+Keep all existing guidance for these.
+
+Step 4 — report back to the user
+
+Print a short summary:
+- Community + window + health score
+- Number of Today actions drafted
+- Number of seed prompts written
+- Number of decisions surfaced
 - The HTML file path
-
-Mention: "Open in browser. Use the tab buttons to switch. Print button prints the currently active tab to PDF."
 
 ## Hard rules
 
-- Every claim in the Business tab must cite evidence from the data — a number, a member name, a topic token. No generic platitudes.
-- Use the community's dominant language for narrative prose. Keep quotes in original language.
-- Never invent members or topics that aren't in the JSON data.
-- If a section has no real data (e.g., `frustrationCandidates` is empty), write "No signal this window" rather than fabricating.
-- Keep each narrative paragraph under 3 sentences. Density over length.
+- Every draft must cite evidence. No generic platitudes.
+- Every message draft must be copy-paste ready — no `[PLACEHOLDER]` tokens, no `<your text here>`, no "tone-match this yourself" notes.
+- Draft language = community dominant language. Voice = CM's voice from samples.
+- Never invent members or topics not in the JSON.
+- If a section has no supporting data (e.g., no buy-curious members), write one card saying "No signal this window" rather than fabricating.
+- Each draft uses the `id="<section>-<index>"` pattern on the `.draft-text` so the Copy button works.

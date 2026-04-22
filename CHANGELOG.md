@@ -4,6 +4,43 @@ All notable changes to Vibra Code Lite are documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.4.0] — 2026-04-22
+
+Dashboard reoriented around the CM's actual workflow. Pulse's CM tab is no longer a set of category cards — it's a time-indexed action brief with copy-paste drafts, pre-written intros, timed seed prompts, and binary decisions.
+
+### Added — CM workflow layer
+
+- **Time-horizon cards** at the top of the CM tab:
+  - **Today** — 3-5 actions with copy-paste message drafts, tone-matched to the CM's voice. Each card has Copy + Dismiss buttons.
+  - **This week** — 5-7 seed prompts anchored to peak posting hours, 2-3 thread follow-ups, newsletter feature nominations.
+  - **This month** — strategic moves: premium-tier interview outreach, onboarding playbook when stickiness is weak, stakeholder pre-brief, sub-community ideas.
+  - **Decisions** — 3-5 binary yes/no questions with pro/con grounded in specific data.
+- **Copy buttons** on every draft — one click, text ready in clipboard.
+- **Dismiss buttons** — hide a card for the session (no persistence; Pro feature).
+- **CM-tab sticky sub-nav** — Today / This week / This month / Decisions / Supporting data.
+- **Supporting data** section (collapsed by default) — the previous category cards still available for raw data lookup.
+
+### Added — new analyzer
+
+- `src/analyzers/cm-context.js`:
+  - **CM detection** — infers likely CM from highest-influence + earliest-joined pattern
+  - **Voice samples** — 3-6 recent messages from the CM for tone-matching
+  - **Peak windows** — top 3 day×hour posting windows (for timing suggestions)
+  - **Moderator candidates** — Power-tier helpers with 30+ days tenure and low risk
+  - **Dormant topics** — tokens hot in prior period but quiet now (revival candidates)
+
+### Added — network map upgrades
+
+- **Tier color legend** above the graph.
+- **Click-to-highlight neighborhood** — click any node to highlight its edges + connected nodes, dim the rest. Click empty space or the node again to clear.
+- **Labels pointer-events disabled** so click passes through to circles.
+- Richer hover tooltip (tier + influence + messages).
+
+### Changed
+
+- Pulse aggregator now computes CM context (name, voice, peaks, moderators, dormant topics).
+- Skill prompt significantly expanded — detailed guidance for each new placeholder, HTML shapes the agent should produce, voice-matching and language rules.
+
 ## [0.3.0] — 2026-04-22
 
 Major visualization + interactivity pass. Plugin renamed from `vibra` to `vibra-code-lite` to distinguish the open-source plugin from the company (Vibra) and the hosted product.

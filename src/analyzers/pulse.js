@@ -13,6 +13,7 @@ import { buildGratitude } from './gratitude.js';
 import { buildContentMix } from './content-mix.js';
 import { buildStickiness } from './stickiness.js';
 import { computeForceLayout } from './force-graph.js';
+import { buildCmContext } from './cm-context.js';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const DEFAULT_WINDOW_DAYS = 42;
@@ -48,6 +49,7 @@ export function buildPulse(parsedMessages, { sinceIso, untilIso } = {}) {
   const gratitude = buildGratitude(parsedMessages, { sinceIso, untilIso });
   const contentMix = buildContentMix(parsedMessages, { sinceIso, untilIso });
   const stickiness = buildStickiness(parsedMessages, { sinceIso, untilIso });
+  const cmContext = buildCmContext(parsedMessages, { sinceIso, untilIso, personas, topics });
 
   const previousSinceIso = new Date(new Date(sinceIso).getTime() - DEFAULT_WINDOW_DAYS * DAY_MS).toISOString();
   const prevReal = real.filter(m => m.sentAt >= previousSinceIso && m.sentAt < sinceIso);
@@ -105,6 +107,7 @@ export function buildPulse(parsedMessages, { sinceIso, untilIso } = {}) {
     memberDaily,
     activityByTier,
     healthScore,
+    cmContext,
   };
 }
 
